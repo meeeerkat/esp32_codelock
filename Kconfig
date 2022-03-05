@@ -1,0 +1,50 @@
+menu "Codelock inputs"
+    config KEYS_NB
+        int "Number of keys"
+        range 1 10
+        default 5
+
+    key_number = 0
+    key_name = A
+    key_default_gpio = 16
+    rsource "Kconfig.key_template"
+
+    key_number = 1
+    key_name = B
+    key_default_gpio = 17
+    rsource "Kconfig.key_template"
+
+    key_number = 2
+    key_name = C
+    key_default_gpio = 18
+    rsource "Kconfig.key_template"
+
+    key_number = 3
+    key_name = D
+    key_default_gpio = 19
+    rsource "Kconfig.key_template"
+
+    key_number = 4
+    key_name = E
+    key_default_gpio = 21
+    rsource "Kconfig.key_template"
+
+    key_number = 5
+    key_name = F
+    key_default_gpio = 22
+    rsource "Kconfig.key_template"
+
+    key_number = 6
+    key_name = G
+    key_default_gpio = 23
+    rsource "Kconfig.key_template"
+
+    key_number = 7
+    key_name = H
+    key_default_gpio = 25
+    rsource "Kconfig.key_template"
+
+    # one can keep going as long as needed...
+
+endmenu
+

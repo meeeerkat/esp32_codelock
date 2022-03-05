@@ -11,20 +11,31 @@
 #include "esp_log.h"
 
 
-#define KEYS_NB 5
+#define KEYS_NB CONFIG_KEYS_NB
 static uint32_t KEYS_GPIOS[KEYS_NB] = {
     CONFIG_A_GPIO,
+    #if KEYS_NB > 1
     CONFIG_B_GPIO,
+    #if KEYS_NB > 2
     CONFIG_C_GPIO,
+    #if KEYS_NB > 3
     CONFIG_D_GPIO,
-    CONFIG_E_GPIO
+    #if KEYS_NB > 4
+    CONFIG_E_GPIO,
+    #if KEYS_NB > 5
+    CONFIG_F_GPIO,
+    #if KEYS_NB > 6
+    CONFIG_G_GPIO,
+    #if KEYS_NB > 7
+    CONFIG_H_GPIO
+    #endif
+    #endif
+    #endif
+    #endif
+    #endif
+    #endif
+    #endif
 };
-
-#define KEYS_GPIO_MASK ((1ULL << CONFIG_A_GPIO) \
-        | (1ULL << CONFIG_B_GPIO) \
-        | (1ULL << CONFIG_C_GPIO) \
-        | (1ULL << CONFIG_D_GPIO) \
-        | (1ULL << CONFIG_E_GPIO));
 
 // code and input_code are not null terminated
 static char* code;
@@ -107,7 +118,9 @@ void init_codelock(char *code)
     gpio_config_t keys_io_conf = {};
     // interrupt on rising edge
     keys_io_conf.intr_type = GPIO_INTR_POSEDGE;
-    keys_io_conf.pin_bit_mask = KEYS_GPIO_MASK;
+    keys_io_conf.pin_bit_mask = 0;
+    for (int i=0; i < KEYS_NB; i++)
+        keys_io_conf.pin_bit_mask |= 1ULL << KEYS_GPIOS[i];
     keys_io_conf.mode = GPIO_MODE_INPUT;
     keys_io_conf.pull_down_en = 0;
     keys_io_conf.pull_up_en = 1;

@@ -1,0 +1,8 @@
+
+if KEYS_NB > $(key_number)
+config $(key_name)_GPIO
+    int "$(key_name) key GPIO number"
+    range 0 39
+    default $(key_default_gpio)
+endif
+
