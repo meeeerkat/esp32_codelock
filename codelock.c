@@ -11,6 +11,18 @@
 #include "esp_log.h"
 
 
+// code and input_code are not null terminated
+#define MAX_CODE_LENGTH 24
+// code and input_code are not null terminated
+static char code[MAX_CODE_LENGTH];
+static size_t code_length;
+static char input_code[MAX_CODE_LENGTH];
+static size_t input_code_length = 0;
+
+static void (*on_success_callback) (void) = NULL;
+static void (*on_failure_callback) (void) = NULL;
+
+
 #define KEYS_NB CONFIG_KEYS_NB
 static uint32_t KEYS_GPIOS[KEYS_NB] = {
     CONFIG_A_GPIO,
@@ -37,29 +49,22 @@ static uint32_t KEYS_GPIOS[KEYS_NB] = {
     #endif
 };
 
-// code and input_code are not null terminated
-static char* code;
-static size_t code_length;
-static char* input_code;
-static size_t input_code_length = 0;
-
 static xQueueHandle key_press_evt_queue = NULL;
-static void (*on_success_callback) (void) = NULL;
-static void (*on_failure_callback) (void) = NULL;
 
 
 // Setters
-void codelock_set_code(char *code_p) {
+void codelock_set_code(char *code_p)
+{
     // Generating code
     code_length = strlen(code_p);
-    code = malloc(code_length * sizeof(char));
     strncpy(code, code_p, code_length);
-    input_code = malloc(code_length * sizeof(char));
 }
-void codelock_set_on_success_callback(void (*callback) (void)) {
+void codelock_set_on_success_callback(void (*callback) (void))
+{
     on_success_callback = callback;
 }
-void codelock_set_on_failure_callback(void (*callback) (void)) {
+void codelock_set_on_failure_callback(void (*callback) (void))
+{
     on_failure_callback = callback;
 }
 
