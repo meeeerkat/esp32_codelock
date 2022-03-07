@@ -10,6 +10,7 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 
+static const char *TAG = "CODELOCK";
 
 // code and input_code are not null terminated
 #define MAX_CODE_LENGTH 24
@@ -87,7 +88,7 @@ static char gpio_to_key(uint32_t key_gpio)
 // Task
 static void codelock_task(void* arg)
 {
-    ESP_LOGI("INPUTS", "Ready to take inputs");
+    ESP_LOGI(TAG, "Ready to take inputs");
 
     uint32_t key_gpio;
     while(1) {
@@ -95,20 +96,16 @@ static void codelock_task(void* arg)
             char key = gpio_to_key(key_gpio);
             if (key != 0) {
                 input_code[input_code_length++] = key;
-                ESP_LOGI("CODELOCK", "input: %c", input_code[input_code_length-1]);
+                ESP_LOGI(TAG, "input: %c", input_code[input_code_length-1]);
                 if (input_code_length == code_length) {
                     input_code_length = 0;
-                    ESP_LOGI("CODELOCK", "CODE ENTERED");
+                    ESP_LOGI(TAG, "Code entered");
                     if(strncmp(code, input_code, code_length) == 0) {
-                        ESP_LOGI("CODELOCK", "LOCKER OPENING");
                         if (on_success_callback)
                             on_success_callback();
                     }
-                    else {
-                        ESP_LOGI("CODELOCK", "WRONG CODE");
-                        if (on_failure_callback)
-                            on_failure_callback();
-                    }
+                    else if (on_failure_callback)
+                        on_failure_callback();
                 }
             }
         }
