@@ -56,7 +56,6 @@ static xQueueHandle key_press_evt_queue = NULL;
 // Setters
 int codelock_set_code(char *code_p)
 {
-    // Generating code
     size_t new_code_length = strlen(code_p);
     if (new_code_length > MAX_CODE_LENGTH)
         return -1;
