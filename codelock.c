@@ -54,11 +54,15 @@ static xQueueHandle key_press_evt_queue = NULL;
 
 
 // Setters
-void codelock_set_code(char *code_p)
+int codelock_set_code(char *code_p)
 {
     // Generating code
-    code_length = strlen(code_p);
+    size_t new_code_length = strlen(code_p);
+    if (new_code_length > MAX_CODE_LENGTH)
+        return -1;
+    code_length = new_code_length;
     strncpy(code, code_p, code_length);
+    return 0;
 }
 void codelock_set_on_success_callback(void (*callback) (void))
 {
@@ -112,9 +116,10 @@ static void codelock_task(void* arg)
     }
 }
 
-void init_codelock(char *code)
+int init_codelock(char *code)
 {
-    codelock_set_code(code);
+    if (codelock_set_code(code) < 0)
+        return -1;
 
     // Configuring input gpios
     gpio_config_t keys_io_conf = {};
@@ -136,5 +141,7 @@ void init_codelock(char *code)
     gpio_install_isr_service(ESP_INTR_FLAG_LOWMED);
     for (uint8_t i=0; i < KEYS_NB; i++)
         gpio_isr_handler_add(KEYS_GPIOS[i], key_press_isr_handler, (void*) KEYS_GPIOS[i]);
+
+    return 0;
 }
 
