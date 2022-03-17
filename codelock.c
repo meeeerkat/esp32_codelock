@@ -110,6 +110,13 @@ static void codelock_task(void* arg)
                     else if (on_failure_callback)
                         on_failure_callback();
                 }
+                // Necessary because the code can be changed at any time so its
+                // length can be reduced while some entries are already saved
+                else if (input_code_length > code_length) {
+                    input_code_length = 0;
+                    if (on_failure_callback)
+                        on_failure_callback();
+                }
             }
         }
     }
